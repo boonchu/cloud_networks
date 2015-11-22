@@ -78,15 +78,11 @@ class AdaptivePolicy(object):
         # Use the dictionary self.utilization
         # (key = switch name, value = utilization in bytes)
         # to find the least utilized switch.
-	#import pprint
-	
-	#edgeSwitches = self.topo.edgeSwitches
-        #pprint.pprint(edgeSwitches)
 
-	#pprint.pprint(self.utilization)
+        return min(self.utilization.items(), key=lambda x: x[1])[0]
 
         # [REPLACE WITH YOUR CODE]
-        return self.utilization.keys()[0]
+        #return self.utilization.keys()[0]
 
     def redistribute(self):
         # we're installing flows by destination, so sort by received
@@ -117,33 +113,33 @@ class AdaptivePolicy(object):
 
         # assign core-edge downward
         for core in topo.coreSwitches.values():
-            routingTable[core.dpid] = []
-            for h in topo.hosts.values():
-                outport = topo.ports[core.name][h.switch]
-                routingTable[core.dpid].append({
+          routingTable[core.dpid] = []
+          for h in topo.hosts.values():
+            outport = topo.ports[core.name][h.switch]
+            routingTable[core.dpid].append({
                     'eth_dst' : h.eth,
                     'output' : [outport],
                     'priority' : 2,
                     'type' : 'dst'
-                })
+            })
 
         for edge in topo.edgeSwitches.values():
-            routingTable[edge.dpid] = []
-            for h in topo.hosts.values():
-                # don't send neighbors up to core
-                if h.name in edge.neighbors:
-                    outport = topo.ports[edge.name][h.name]
-                else:
-                    # send to core
-                    core = self.assignments[h.name]
-                    outport = topo.ports[edge.name][core]
+          routingTable[edge.dpid] = []
+          for h in topo.hosts.values():
+            # don't send neighbors up to core
+            if h.name in edge.neighbors:
+              outport = topo.ports[edge.name][h.name]
+            else:
+              # send to core
+              core = self.assignments[h.name]
+              outport = topo.ports[edge.name][core]
 
-                routingTable[edge.dpid].append({
-                    'eth_dst' : h.eth,
-                    'output' : [outport],
-                    'priority' : 2,
-                    'type' : 'dst'
-                })
+            routingTable[edge.dpid].append({
+              'eth_dst' : h.eth,
+              'output' : [outport],
+              'priority' : 2,
+              'type' : 'dst'
+            })
 
         return flood.add_arpflood(routingTable, topo)
 
@@ -180,7 +176,7 @@ class StaticPolicy(object):
 
         # [ADD YOUR CODE HERE]
 
-	#import pprint
+	import pprint
 	#pprint.pprint(topo.vlans)
 
         #vlans = [topo.coreSwitches[core].vlans[0] for core in topo.coreSwitches.keys()]
@@ -200,11 +196,11 @@ class StaticPolicy(object):
             for h in topo.hosts.values():
               # don't send neighbors up to core
               if h.name in edge.neighbors:
-		print "*** edge.name %s edge.dpid %d vlan %s edge_port %d ***"%(edge.name, edge.dpid, 'none', topo.ports[edge.name][h.name])
+		#print "*** edge.name %s edge.dpid %d vlan %s edge_port %d ***"%(edge.name, edge.dpid, 'none', topo.ports[edge.name][h.name])
           	outport = topo.ports[edge.name][h.name]
 	      else:
-		if h.name in topo.vlans[h.vlans[0]]:
-		  print "*** h.name %s h.eth %s vlan %d edge_port %d ***"%(h.name, h.eth, h.vlans[0], topo.ports[edge.name][topo.getVlanCore(h.vlans[0])])
+		#if h.name in topo.vlans[h.vlans[0]]:
+		  #print "*** h.name %s h.eth %s vlan %d edge_port %d ***"%(h.name, h.eth, h.vlans[0], topo.ports[edge.name][topo.getVlanCore(h.vlans[0])])
 		outport = topo.ports[edge.name][topo.getVlanCore(h.vlans[0])]
 		
               routingTable[edge.dpid].append({
@@ -215,7 +211,7 @@ class StaticPolicy(object):
               })
 	
 
-	pprint.pprint(routingTable)
+	#pprint.pprint(routingTable)
 
         return flood.add_arpflood(routingTable, topo)
 
