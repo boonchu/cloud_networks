@@ -145,18 +145,18 @@ class BandwidthMonitor(app_manager.RyuApp):
 
 	#self.bwstats.addHostBwStat(h1, 100, 1000)
 
-	import pprint
+	#import pprint
 
 	hosts = self.topo.hosts
-	pprint.pprint(hosts)
+	#pprint.pprint(hosts)
 
 	edgeSwitches = self.topo.edgeSwitches
-	pprint.pprint(edgeSwitches)
+	#pprint.pprint(edgeSwitches)
 	if name in edgeSwitches:
 	  #pprint.pprint(name) 
 	  for stat in body:
-	    pprint.pprint(name)
-	    pprint.pprint(stat)	
+	    #pprint.pprint(name)
+	    #pprint.pprint(stat)	
 	    if stat.port_no in self.topo.ports[name].keys():
 	      host = self.topo.ports[name][stat.port_no]
 	      #pprint.pprint(host)
