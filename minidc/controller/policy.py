@@ -78,6 +78,12 @@ class AdaptivePolicy(object):
         # Use the dictionary self.utilization
         # (key = switch name, value = utilization in bytes)
         # to find the least utilized switch.
+	#import pprint
+	
+	#edgeSwitches = self.topo.edgeSwitches
+        #pprint.pprint(edgeSwitches)
+
+	#pprint.pprint(self.utilization)
 
         # [REPLACE WITH YOUR CODE]
         return self.utilization.keys()[0]
@@ -173,6 +179,43 @@ class StaticPolicy(object):
         #   (Hint: to find a the VLAN, use topo.getVlanCore(vlanId))
 
         # [ADD YOUR CODE HERE]
+
+	#import pprint
+	#pprint.pprint(topo.vlans)
+
+        #vlans = [topo.coreSwitches[core].vlans[0] for core in topo.coreSwitches.keys()]
+	#for vlan in vlans:
+	#  print "*** vlan %d ***"%vlan
+	#  pprint.pprint(topo.getVlanCore(vlan))
+
+        #for core in topo.coreSwitches.values():
+        #  for h in topo.hosts.values():
+        #    print "%s %s %s"%(core.name, h.switch, topo.ports[core.name][h.switch])
+
+	edgeSwitches = topo.edgeSwitches.values()
+        pprint.pprint(edgeSwitches)
+
+        for edge in topo.edgeSwitches.values():
+            routingTable[edge.dpid] = []
+            for h in topo.hosts.values():
+              # don't send neighbors up to core
+              if h.name in edge.neighbors:
+		print "*** edge.name %s edge.dpid %d vlan %s edge_port %d ***"%(edge.name, edge.dpid, 'none', topo.ports[edge.name][h.name])
+          	outport = topo.ports[edge.name][h.name]
+	      else:
+		if h.name in topo.vlans[h.vlans[0]]:
+		  print "*** h.name %s h.eth %s vlan %d edge_port %d ***"%(h.name, h.eth, h.vlans[0], topo.ports[edge.name][topo.getVlanCore(h.vlans[0])])
+		outport = topo.ports[edge.name][topo.getVlanCore(h.vlans[0])]
+		
+              routingTable[edge.dpid].append({
+          	'eth_dst' : h.eth,
+          	'output' : [outport],
+         	'priority' : 2,
+          	'type' : 'dst'
+              })
+	
+
+	pprint.pprint(routingTable)
 
         return flood.add_arpflood(routingTable, topo)
 
