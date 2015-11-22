@@ -180,7 +180,7 @@ class StaticPolicy(object):
 
         # [ADD YOUR CODE HERE]
 
-	#import pprint
+	import pprint
 	#pprint.pprint(topo.vlans)
 
         #vlans = [topo.coreSwitches[core].vlans[0] for core in topo.coreSwitches.keys()]
